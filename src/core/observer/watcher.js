@@ -54,6 +54,7 @@ export default class Watcher {
     if (isRenderWatcher) {
       vm._watcher = this
     }
+    // vm._watchers用来监听，vm上数据变化，然后重新渲染
     vm._watchers.push(this)
     // options
     if (options) {
@@ -68,7 +69,7 @@ export default class Watcher {
     this.cb = cb
     this.id = ++uid // uid for batching
     this.active = true
-    this.dirty = this.lazy // for lazy watchers
+    this.dirty = this.lazy // for lazy watchers, 就是computed
     this.deps = []
     this.newDeps = []
     this.depIds = new Set()
@@ -91,6 +92,7 @@ export default class Watcher {
         )
       }
     }
+    // 计算属性不会立马读取值，计算属性通过evaluate读取值
     this.value = this.lazy
       ? undefined
       : this.get()
@@ -104,6 +106,8 @@ export default class Watcher {
     let value
     const vm = this.vm
     try {
+      // 调用updateComponent，触发vm._render方法，进而出发Object.defineproperty中的getter，进行依赖收集，
+      // Dep为依赖收集器，vue会为每个组件创建一个Watcher
       value = this.getter.call(vm, vm)
     } catch (e) {
       if (this.user) {

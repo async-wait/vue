@@ -90,6 +90,7 @@ export function lifecycleMixin (Vue: Class<Component>) {
   Vue.prototype.$forceUpdate = function () {
     const vm: Component = this
     if (vm._watcher) {
+      // 数据依赖，就是Watcher实例
       vm._watcher.update()
     }
   }
@@ -205,8 +206,9 @@ export function mountComponent (
 
   // manually mounted instance, call mounted on self
   // mounted is called for render-created child components in its inserted hook
+  // 这里表明不是组件初始化过程，而是外部new Vue
   if (vm.$vnode == null) {
-    vm._isMounted = true
+    vm._isMounted = true // vm实例已经挂载
     callHook(vm, 'mounted')
   }
   return vm

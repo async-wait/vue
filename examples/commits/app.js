@@ -13,11 +13,19 @@ new Vue({
   data: {
     branches: ['master', 'dev'],
     currentBranch: 'master',
-    commits: null
+    commits: null,
+    msg: 'ftj',
+    test: '101010'
   },
 
   created: function () {
     this.fetchData()
+  },
+
+  computed: {
+    name () {
+      return this.msg;
+    }
   },
 
   watch: {
@@ -35,6 +43,9 @@ new Vue({
   },
 
   methods: {
+    changeName () {
+      this.msg = '11111';
+    },
     fetchData: function () {
       var self = this
       if (navigator.userAgent.indexOf('PhantomJS') > -1) {

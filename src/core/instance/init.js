@@ -35,6 +35,7 @@ export function initMixin (Vue: Class<Component>) {
       // internal component options needs special treatment.
       initInternalComponent(vm, options)
     } else {
+      // 将Vue.options上的静态方法属性等、合并到vm.$options上去
       vm.$options = mergeOptions(
         resolveConstructorOptions(vm.constructor),
         options || {},
@@ -49,14 +50,14 @@ export function initMixin (Vue: Class<Component>) {
     }
     // expose real self
     vm._self = vm
-    initLifecycle(vm)
-    initEvents(vm)
-    initRender(vm)
-    callHook(vm, 'beforeCreate')
+    initLifecycle(vm)  // 初始化生命周期
+    initEvents(vm) // 初始化事件
+    initRender(vm) // 初始化渲染模版
+    callHook(vm, 'beforeCreate')  // 调用beforeCreate
     initInjections(vm) // resolve injections before data/props
-    initState(vm)
+    initState(vm) // 初始化state
     initProvide(vm) // resolve provide after data/props
-    callHook(vm, 'created')
+    callHook(vm, 'created') // 调用 created
 
     /* istanbul ignore if */
     if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
@@ -64,7 +65,6 @@ export function initMixin (Vue: Class<Component>) {
       mark(endTag)
       measure(`vue ${vm._name} init`, startTag, endTag)
     }
-
     if (vm.$options.el) {
       vm.$mount(vm.$options.el)
     }
