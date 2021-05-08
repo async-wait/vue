@@ -51,6 +51,7 @@ export default class Watcher {
     isRenderWatcher?: boolean
   ) {
     this.vm = vm
+    // 只有是渲染Watcher时，computed和user watcher不会触发
     if (isRenderWatcher) {
       vm._watcher = this
     }
@@ -59,10 +60,10 @@ export default class Watcher {
     // options
     if (options) {
       this.deep = !!options.deep
-      this.user = !!options.user
+      this.user = !!options.user // 判断是否是用户自定义的watcher
       this.lazy = !!options.lazy
       this.sync = !!options.sync
-      this.before = options.before
+      this.before = options.before  // 用来触发buforeUpdate钩子函数
     } else {
       this.deep = this.user = this.lazy = this.sync = false
     }

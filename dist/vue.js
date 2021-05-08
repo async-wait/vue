@@ -4438,6 +4438,7 @@
     isRenderWatcher
   ) {
     this.vm = vm;
+    // 只有是渲染Watcher时，computed和user watcher不会触发
     if (isRenderWatcher) {
       vm._watcher = this;
     }
@@ -4446,10 +4447,10 @@
     // options
     if (options) {
       this.deep = !!options.deep;
-      this.user = !!options.user;
+      this.user = !!options.user; // 判断是否是用户自定义的watcher
       this.lazy = !!options.lazy;
       this.sync = !!options.sync;
-      this.before = options.before;
+      this.before = options.before;// 用来触发buforeUpdate钩子函数
     } else {
       this.deep = this.user = this.lazy = this.sync = false;
     }
@@ -4488,6 +4489,7 @@
    * Evaluate the getter, and re-collect dependencies.
    */
   Watcher.prototype.get = function get () {
+    // 将Watcher实例赋值给Dep.target
     pushTarget(this);
     var value;
     var vm = this.vm;
@@ -5150,6 +5152,7 @@
      */
     Vue.extend = function (extendOptions) {
       extendOptions = extendOptions || {};
+      // 这里Super是Vue构造函数
       var Super = this;
       var SuperId = Super.cid;
       var cachedCtors = extendOptions._Ctor || (extendOptions._Ctor = {});
@@ -5163,8 +5166,10 @@
       }
 
       var Sub = function VueComponent (options) {
+        // 这里调用的是vm.init, Vue.prototype._init
         this._init(options);
       };
+      // 这里通过组合式继承，把Sub的prototype继承Vue.prototype的方法和属性
       Sub.prototype = Object.create(Super.prototype);
       Sub.prototype.constructor = Sub;
       Sub.cid = cid++;

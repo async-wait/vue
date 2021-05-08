@@ -18,6 +18,7 @@ export function initExtend (Vue: GlobalAPI) {
    */
   Vue.extend = function (extendOptions: Object): Function {
     extendOptions = extendOptions || {}
+    // 这里Super是Vue构造函数
     const Super = this
     const SuperId = Super.cid
     const cachedCtors = extendOptions._Ctor || (extendOptions._Ctor = {})
@@ -31,8 +32,10 @@ export function initExtend (Vue: GlobalAPI) {
     }
 
     const Sub = function VueComponent (options) {
+      // 这里调用的是vm.init, Vue.prototype._init
       this._init(options)
     }
+    // 这里通过组合式继承，把Sub的prototype继承Vue.prototype的方法和属性
     Sub.prototype = Object.create(Super.prototype)
     Sub.prototype.constructor = Sub
     Sub.cid = cid++
