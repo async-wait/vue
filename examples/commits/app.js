@@ -6,6 +6,23 @@ var apiURL = 'https://api.github.com/repos/vuejs/vue/commits?per_page=3&sha='
  * Actual demo
  */
 
+var Profile = Vue.extend({
+  template: '<p>{{firstName}} {{lastName}} aka {{alias}} {{message}}</p>',
+  data: function () {
+    return {
+      firstName: 'Walter',
+      lastName: 'White',
+      alias: 'Heisenberg'
+    }
+  }
+})
+// 创建 Profile 实例，并挂载到一个元素上。
+new Profile({
+  data: {
+    message: 'test'
+  }
+}).$mount('#mount-point')
+
 new Vue({
 
   el: '#demo',
