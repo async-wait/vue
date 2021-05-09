@@ -4499,7 +4499,7 @@
     try {
       // 调用updateComponent，触发vm._render方法，进而出发Object.defineproperty中的getter，进行依赖收集，
       // Dep为依赖收集器，vue会为每个组件创建一个Watcher
-      value = this.getter.call(vm, vm);
+      value = this.getter.call(vm, vm); 
     } catch (e) {
       if (this.user) {
         handleError(e, vm, ("getter for watcher \"" + (this.expression) + "\""));
