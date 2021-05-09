@@ -4055,6 +4055,7 @@
     }
     callHook(vm, 'beforeMount');
 
+    // updateComponent方法，在Watcher实例化的时候调用，读取data数据，进而触发getter，进行依赖收集
     var updateComponent;
     /* istanbul ignore if */
     if ( config.performance && mark) {
@@ -4083,6 +4084,7 @@
     // we set this to vm._watcher inside the watcher's constructor
     // since the watcher's initial patch may call $forceUpdate (e.g. inside child
     // component's mounted hook), which relies on vm._watcher being already defined
+    // debugger
     new Watcher(vm, updateComponent, noop, {
       before: function before () {
         if (vm._isMounted && !vm._isDestroyed) {
@@ -4096,7 +4098,7 @@
     // mounted is called for render-created child components in its inserted hook
     // 这里表明不是组件初始化过程，而是外部new Vue
     if (vm.$vnode == null) {
-      vm._isMounted = true; // vm实例已经挂载
+      vm._isMounted = true;
       callHook(vm, 'mounted');
     }
     return vm
@@ -4488,6 +4490,7 @@
    * Evaluate the getter, and re-collect dependencies.
    */
   Watcher.prototype.get = function get () {
+    // 当通过evalute方法调用时，当前this指向computed watcher
     pushTarget(this);
     var value;
     var vm = this.vm;
@@ -4670,7 +4673,7 @@
     // cache prop keys so that future props updates can iterate using Array
     // instead of dynamic object key enumeration.
     var keys = vm.$options._propKeys = [];
-    var isRoot = !vm.$parent;
+    var isRoot = !vm.$parent; // 没有$parent则是Vue根
     // root instance props should be converted
     if (!isRoot) {
       toggleObserving(false);
@@ -4767,8 +4770,6 @@
     }
   }
 
-  var computedWatcherOptions = { lazy: true };
-
   function initComputed (vm, computed) {
     // $flow-disable-line
     var watchers = vm._computedWatchers = Object.create(null);
@@ -4777,6 +4778,7 @@
 
     for (var key in computed) {
       var userDef = computed[key];
+      // 判断computed中的属性是否是function，如果是的话直接用，否则取其get属性
       var getter = typeof userDef === 'function' ? userDef : userDef.get;
       if ( getter == null) {
         warn(
@@ -4786,12 +4788,17 @@
       }
 
       if (!isSSR) {
+        // 如果不是ssr模式，生成计算watcher
         // create internal watcher for the computed property.
         watchers[key] = new Watcher(
           vm,
           getter || noop,
           noop,
-          computedWatcherOptions
+          // computedWatcherOptions
+          // 下面是自定义的
+          {
+            lazy: true
+          }
         );
       }
 
@@ -4845,7 +4852,9 @@
 
   function createComputedGetter (key) {
     return function computedGetter () {
+      // 这个地方是计算watcher
       var watcher = this._computedWatchers && this._computedWatchers[key];
+      // debugger
       if (watcher) {
         if (watcher.dirty) {
           watcher.evaluate();

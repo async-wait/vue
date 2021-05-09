@@ -68,7 +68,7 @@ function initProps (vm: Component, propsOptions: Object) {
   // cache prop keys so that future props updates can iterate using Array
   // instead of dynamic object key enumeration.
   const keys = vm.$options._propKeys = []
-  const isRoot = !vm.$parent
+  const isRoot = !vm.$parent // 没有$parent则是Vue根
   // root instance props should be converted
   if (!isRoot) {
     toggleObserving(false)
@@ -175,6 +175,7 @@ function initComputed (vm: Component, computed: Object) {
 
   for (const key in computed) {
     const userDef = computed[key]
+    // 判断computed中的属性是否是function，如果是的话直接用，否则取其get属性
     const getter = typeof userDef === 'function' ? userDef : userDef.get
     if (process.env.NODE_ENV !== 'production' && getter == null) {
       warn(
@@ -184,12 +185,17 @@ function initComputed (vm: Component, computed: Object) {
     }
 
     if (!isSSR) {
+      // 如果不是ssr模式，生成计算watcher
       // create internal watcher for the computed property.
       watchers[key] = new Watcher(
         vm,
         getter || noop,
         noop,
-        computedWatcherOptions
+        // computedWatcherOptions
+        // 下面是自定义的
+        {
+          lazy: true
+        }
       )
     }
 
@@ -243,7 +249,9 @@ export function defineComputed (
 
 function createComputedGetter (key) {
   return function computedGetter () {
+    // 这个地方是计算watcher
     const watcher = this._computedWatchers && this._computedWatchers[key];
+    // debugger
     if (watcher) {
       if (watcher.dirty) {
         watcher.evaluate()

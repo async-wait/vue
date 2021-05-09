@@ -102,6 +102,7 @@ export default class Watcher {
    * Evaluate the getter, and re-collect dependencies.
    */
   get () {
+    // 当通过evalute方法调用时，当前this指向computed watcher
     pushTarget(this)
     let value
     const vm = this.vm

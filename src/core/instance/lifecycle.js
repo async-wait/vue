@@ -167,6 +167,7 @@ export function mountComponent (
   }
   callHook(vm, 'beforeMount')
 
+  // updateComponent方法，在Watcher实例化的时候调用，读取data数据，进而触发getter，进行依赖收集
   let updateComponent
   /* istanbul ignore if */
   if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
@@ -195,6 +196,7 @@ export function mountComponent (
   // we set this to vm._watcher inside the watcher's constructor
   // since the watcher's initial patch may call $forceUpdate (e.g. inside child
   // component's mounted hook), which relies on vm._watcher being already defined
+  // debugger
   new Watcher(vm, updateComponent, noop, {
     before () {
       if (vm._isMounted && !vm._isDestroyed) {
@@ -208,7 +210,7 @@ export function mountComponent (
   // mounted is called for render-created child components in its inserted hook
   // 这里表明不是组件初始化过程，而是外部new Vue
   if (vm.$vnode == null) {
-    vm._isMounted = true // vm实例已经挂载
+    vm._isMounted = true
     callHook(vm, 'mounted')
   }
   return vm
