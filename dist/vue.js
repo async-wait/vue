@@ -3374,6 +3374,7 @@
     if (isTrue(alwaysNormalize)) {
       normalizationType = ALWAYS_NORMALIZE;
     }
+    // debugger
     return _createElement(context, tag, data, children, normalizationType)
   }
 
@@ -3566,6 +3567,7 @@
         // separately from one another. Nested component's render fns are called
         // when parent component is patched.
         currentRenderingInstance = vm;
+        // 调用render: function (createElement) { return createElement() }
         vnode = render.call(vm._renderProxy, vm.$createElement);
       } catch (e) {
         handleError(e, vm, "render");
@@ -3953,7 +3955,8 @@
       // Vue.prototype.__patch__ is injected in entry points
       // based on the rendering backend used.
       if (!prevVnode) {
-        // initial render
+        // initial 
+        // 这里是虚拟dom替换真实dom
         vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */);
       } else {
         // updates
@@ -4084,7 +4087,6 @@
     // we set this to vm._watcher inside the watcher's constructor
     // since the watcher's initial patch may call $forceUpdate (e.g. inside child
     // component's mounted hook), which relies on vm._watcher being already defined
-    // debugger
     new Watcher(vm, updateComponent, noop, {
       before: function before () {
         if (vm._isMounted && !vm._isDestroyed) {
@@ -5112,7 +5114,7 @@
   stateMixin(Vue);
   eventsMixin(Vue);
   lifecycleMixin(Vue);
-  renderMixin(Vue); // 混入，将_render方法挂载到Vue.prototype上
+  renderMixin(Vue); // 将_render方法挂载到Vue.prototype上
 
   /*  */
 
@@ -5159,6 +5161,7 @@
     /**
      * Class inheritance
      */
+    // 实现组件继承 Vue, 并且调用Vue.prototype._init, 进行初始化
     Vue.extend = function (extendOptions) {
       extendOptions = extendOptions || {};
       // 这里Super是Vue构造函数
@@ -5178,7 +5181,8 @@
         // 这里调用的是vm.init, Vue.prototype._init
         this._init(options);
       };
-      // 这里通过组合式继承，把Sub的prototype继承Vue.prototype的方法和属性
+      // 原型继承，把Sub的prototype继承Vue.prototype的方法和属性
+      // 相当于 Component extends Vue
       Sub.prototype = Object.create(Super.prototype);
       Sub.prototype.constructor = Sub;
       Sub.cid = cid++;
