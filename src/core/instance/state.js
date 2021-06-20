@@ -251,7 +251,6 @@ function createComputedGetter (key) {
   return function computedGetter () {
     // 这个地方是计算watcher
     const watcher = this._computedWatchers && this._computedWatchers[key];
-    // debugger
     if (watcher) {
       if (watcher.dirty) {
         watcher.evaluate()
@@ -365,9 +364,11 @@ export function stateMixin (Vue: Class<Component>) {
     options = options || {}
     options.user = true
     const watcher = new Watcher(vm, expOrFn, cb, options)
+    
     if (options.immediate) {
       const info = `callback for immediate watcher "${watcher.expression}"`
       pushTarget()
+      
       invokeWithErrorHandling(cb, vm, [watcher.value], vm, info)
       popTarget()
     }

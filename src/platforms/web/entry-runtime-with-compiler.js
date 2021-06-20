@@ -15,6 +15,9 @@ const idToTemplate = cached(id => {
 })
 
 const mount = Vue.prototype.$mount
+// 这个地方判断 new Vue()时，是否存在render函数
+// 不存在则会把template编译成render函数
+// 存在render函数则直接执行挂载函数，借助vue-loader对*.vue格式的文件进行编译
 Vue.prototype.$mount = function (
   el?: string | Element,
   hydrating?: boolean

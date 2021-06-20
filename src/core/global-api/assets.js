@@ -21,6 +21,8 @@ export function initAssetRegisters (Vue: GlobalAPI) {
         }
         if (type === 'component' && isPlainObject(definition)) {
           definition.name = definition.name || id
+          // 在./index.js中将Vue赋值给了._base，this.options._base.extend === Vue.extend
+          // 子组件创建过程也是通过extend函数实现的
           definition = this.options._base.extend(definition)
         }
         if (type === 'directive' && typeof definition === 'function') {

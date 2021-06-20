@@ -512,7 +512,7 @@
       return
     }
     var segments = path.split('.');
-    return function (obj) {
+  /*  */  return function (obj) {
       for (var i = 0; i < segments.length; i++) {
         if (!obj) { return }
         obj = obj[segments[i]];
@@ -4320,6 +4320,7 @@
     for (index = 0; index < queue.length; index++) {
       watcher = queue[index];
       if (watcher.before) {
+        // 执行的是beforeUpdate钩子
         watcher.before();
       }
       id = watcher.id;
@@ -4466,6 +4467,7 @@
     this.newDepIds = new _Set();
     this.expression =  expOrFn.toString()
       ;
+        
     // parse expression for getter
     if (typeof expOrFn === 'function') {
       this.getter = expOrFn;
@@ -4856,7 +4858,6 @@
     return function computedGetter () {
       // 这个地方是计算watcher
       var watcher = this._computedWatchers && this._computedWatchers[key];
-      // debugger
       if (watcher) {
         if (watcher.dirty) {
           watcher.evaluate();
@@ -4970,9 +4971,11 @@
       options = options || {};
       options.user = true;
       var watcher = new Watcher(vm, expOrFn, cb, options);
+      
       if (options.immediate) {
         var info = "callback for immediate watcher \"" + (watcher.expression) + "\"";
         pushTarget();
+        
         invokeWithErrorHandling(cb, vm, [watcher.value], vm, info);
         popTarget();
       }
@@ -5108,8 +5111,8 @@
     this._init(options);
   }
 
-  initMixin(Vue);
-  stateMixin(Vue);
+  initMixin(Vue);  // 将_init方法挂载到Vue.prototype上
+  stateMixin(Vue);  // 
   eventsMixin(Vue);
   lifecycleMixin(Vue);
   renderMixin(Vue); // 混入，将_render方法挂载到Vue.prototype上
@@ -5260,6 +5263,8 @@
           }
           if (type === 'component' && isPlainObject(definition)) {
             definition.name = definition.name || id;
+            // 在./index.js中将Vue赋值给了._base，this.options._base.extend === Vue.extend
+            // 子组件创建过程也是通过extend函数实现的
             definition = this.options._base.extend(definition);
           }
           if (type === 'directive' && typeof definition === 'function') {
@@ -11953,6 +11958,9 @@
   });
 
   var mount = Vue.prototype.$mount;
+  // 这个地方判断 new Vue()时，是否存在render函数
+  // 不存在则会把template编译成render函数
+  // 存在render函数则直接执行挂载函数，借助vue-loader对*.vue格式的文件进行编译
   Vue.prototype.$mount = function (
     el,
     hydrating

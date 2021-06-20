@@ -17,19 +17,75 @@
       .author, .date {
         font-weight: bold;
       }
+      #main {
+        height: 3000px;
+        margin-top: 50px;
+        border: 1px solid #ccc;
+        overflow: scroll;
+      }
+      #main .content {
+        height: 800px;
+      }
     </style>
     <!-- Delete ".min" for console warnings in development -->
     <script src="../../dist/vue.js"></script>
   </head>
   <body>
-    <div id="demo">
+    <div id="main">
+      <div class="content"></div>
+    </div>
+    <!-- <div id="demo">
       <h2>{{name}}</h2>
-      <!-- <h2>{{currentBranch}}</h2> -->
+      <h2>{{currentBranch}}</h2>
       <button @click="changeName">changeName</button>
 
       <div id="mount-point"></div>
     </div>
     <script src="mock.js"></script>
-    <script src="app.js"></script>
+    <script src="app.js"></script> -->
+    <button id="button">点击我</button>
+    <script>
+      function fetchCb (a, b, c) {
+        console.log(new Date(), '-----', a, b, c);
+      }
+      const fetch = throttle(fetchCb, 1000, true);
+      document.getElementById('button').addEventListener('click', () => {
+        fetch('click button');
+      }, false);
+
+      // 节流函数
+      function throttle (cb, wait, immediate) {
+        let timer = null;
+        return function () {
+          const ctx = this;
+          if (immediate) {
+            cb.apply(ctx, arguments);
+            immediate = null;
+            return;
+          }
+          if (!timer) {
+            timer = setTimeout(() => {
+              cb.apply(ctx, arguments);
+              timer = null;
+            }, wait);
+          }
+        }
+      }
+      // 防抖函数
+      function debounce (cb, wait) {
+        let timer = null;
+        return function () {
+          const ctx = this;
+          const args = arguments;
+          if (timer) {
+            clearTimeout(timer);
+          }
+          timer = setTimeout(() => {
+            cb.apply(ctx, args);
+            timer = null;
+          }, wait);
+        }
+      }
+    </script>
   </body>
 </html>

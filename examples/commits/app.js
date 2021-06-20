@@ -46,7 +46,10 @@ new Vue({
   },
 
   watch: {
-    currentBranch: 'fetchData'
+    currentBranch: {
+      immediate: true,
+      handler: 'fetchData'
+    }
   },
 
   filters: {
@@ -61,24 +64,11 @@ new Vue({
 
   methods: {
     changeName () {
-      this.msg = '11111';
+      this.currentBranch = 'other master';
     },
     fetchData: function () {
-      var self = this
-      if (navigator.userAgent.indexOf('PhantomJS') > -1) {
-        // use mocks in e2e to avoid dependency on network / authentication
-        setTimeout(function () {
-          self.commits = window.MOCKS[self.currentBranch]
-        }, 0)
-      } else {
-        var xhr = new XMLHttpRequest()
-        xhr.open('GET', apiURL + self.currentBranch)
-        xhr.onload = function () {
-          self.commits = JSON.parse(xhr.responseText)
-          console.log(self.commits[0].html_url)
-        }
-        xhr.send()
-      }
+      console.log('--------');
+      
     }
   }
 })
