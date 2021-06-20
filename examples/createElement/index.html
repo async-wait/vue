@@ -13,12 +13,17 @@
     new Vue({
       el: '#root',
       render: function (c) {
-        return c('setion', {
+        return c('div', {
           attrs: {
             id: 'root'
           },
         }, this.message);
-      }
+      },
+      data () {
+        return {
+          message: 'test'
+        }
+      },
     });
   </script>
 </body>

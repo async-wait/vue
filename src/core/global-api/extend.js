@@ -16,6 +16,7 @@ export function initExtend (Vue: GlobalAPI) {
   /**
    * Class inheritance
    */
+  // 实现组件继承 Vue, 并且调用Vue.prototype._init, 进行初始化
   Vue.extend = function (extendOptions: Object): Function {
     extendOptions = extendOptions || {}
     // 这里Super是Vue构造函数
@@ -35,7 +36,8 @@ export function initExtend (Vue: GlobalAPI) {
       // 这里调用的是vm.init, Vue.prototype._init
       this._init(options)
     }
-    // 这里通过组合式继承，把Sub的prototype继承Vue.prototype的方法和属性
+    // 原型继承，把Sub的prototype继承Vue.prototype的方法和属性
+    // 相当于 Component extends Vue
     Sub.prototype = Object.create(Super.prototype)
     Sub.prototype.constructor = Sub
     Sub.cid = cid++
