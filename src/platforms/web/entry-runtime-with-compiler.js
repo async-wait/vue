@@ -13,7 +13,7 @@ const idToTemplate = cached(id => {
   const el = query(id)
   return el && el.innerHTML
 })
-
+// 缓存mount函数
 const mount = Vue.prototype.$mount
 // 这个地方判断 new Vue()时，是否存在render函数
 // 不存在则会把template编译成render函数
@@ -34,6 +34,7 @@ Vue.prototype.$mount = function (
 
   const options = this.$options
   // resolve template/el and convert to render function
+  // 用来区分是否是完成版vue
   if (!options.render) {
     let template = options.template
     if (template) {

@@ -164,6 +164,7 @@ function callActivatedHooks (queue) {
  */
 export function queueWatcher (watcher: Watcher) {
   const id = watcher.id
+  // 如果但时间内修改同一个渲染Watcher上的数据，渲染Watcher只执行一次
   if (has[id] == null) {
     has[id] = true
     if (!flushing) {

@@ -172,6 +172,7 @@ export default class Watcher {
    */
   update () {
     /* istanbul ignore else */
+    // 如果当前watcher.lazy是true，则表示属于computed
     if (this.lazy) {
       this.dirty = true
     } else if (this.sync) {

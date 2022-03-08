@@ -8,22 +8,20 @@
   <script src="../../dist/vue.js"></script>
 </head>
 <body>
-  <div id="root">{{message}}</div>
+  <div id="root">
+    <div>{{name}}</div>
+  </div>
   <script>
     new Vue({
       el: '#root',
-      render: function (c) {
-        return c('div', {
-          attrs: {
-            id: 'root'
-          },
-        }, this.message);
-      },
       data () {
         return {
-          message: 'test'
+          name: 'test'
         }
       },
+      mounted () {
+        this.name = 'tjfan';
+      }
     });
   </script>
 </body>

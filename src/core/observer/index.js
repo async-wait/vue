@@ -62,6 +62,7 @@ export class Observer {
    * value type is Object.
    */
   walk (obj: Object) {
+    // 循环遍历data中的参数，添加getter/setter
     const keys = Object.keys(obj)
     for (let i = 0; i < keys.length; i++) {
       defineReactive(obj, keys[i])
@@ -108,6 +109,7 @@ function copyAugment (target: Object, src: Object, keys: Array<string>) {
  * or the existing observer if the value already has one.
  */
 export function observe (value: any, asRootData: ?boolean): Observer | void {
+  // 如果传过来的值不是data对象则不进行数据截至
   if (!isObject(value) || value instanceof VNode) {
     return
   }
@@ -121,6 +123,7 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
     Object.isExtensible(value) &&
     !value._isVue
   ) {
+    // 实例化Observer对象
     ob = new Observer(value)
   }
   if (asRootData && ob) {
@@ -159,7 +162,9 @@ export function defineReactive (
     configurable: true,
     get: function reactiveGetter () {
       const value = getter ? getter.call(obj) : val
+      // 当执行updateComponent回调（Watcher实例中this.get方法）函数，触发vm._render时，读取模板上的参数时触发
       if (Dep.target) {
+        // 依赖收集，也就是收集Watcher
         dep.depend()
         if (childOb) {
           childOb.dep.depend()
@@ -188,6 +193,7 @@ export function defineReactive (
         val = newVal
       }
       childOb = !shallow && observe(newVal)
+      // 当数据变化，执行依赖收集器里面的所有watcher
       dep.notify()
     }
   })

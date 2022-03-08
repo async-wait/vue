@@ -1,6 +1,6 @@
 /*!
  * Vue.js v2.6.12
- * (c) 2014-2021 Evan You
+ * (c) 2014-2022 Evan You
  * Released under the MIT License.
  */
 (function (global, factory) {
@@ -742,6 +742,7 @@
       subs.sort(function (a, b) { return a.id - b.id; });
     }
     for (var i = 0, l = subs.length; i < l; i++) {
+      // subs[i] 表示Watcher
       subs[i].update();
     }
   };
@@ -942,6 +943,7 @@
    * value type is Object.
    */
   Observer.prototype.walk = function walk (obj) {
+    // 循环遍历data中的参数，添加getter/setter
     var keys = Object.keys(obj);
     for (var i = 0; i < keys.length; i++) {
       defineReactive(obj, keys[i]);
@@ -987,6 +989,7 @@
    * or the existing observer if the value already has one.
    */
   function observe (value, asRootData) {
+    // 如果传过来的值不是data对象则不进行数据截至
     if (!isObject(value) || value instanceof VNode) {
       return
     }
@@ -1000,6 +1003,7 @@
       Object.isExtensible(value) &&
       !value._isVue
     ) {
+      // 实例化Observer对象
       ob = new Observer(value);
     }
     if (asRootData && ob) {
@@ -1038,7 +1042,9 @@
       configurable: true,
       get: function reactiveGetter () {
         var value = getter ? getter.call(obj) : val;
+        // 当执行updateComponent回调（Watcher实例中this.get方法）函数，触发vm._render时，读取模板上的参数时触发
         if (Dep.target) {
+          // 依赖收集，也就是收集Watcher
           dep.depend();
           if (childOb) {
             childOb.dep.depend();
@@ -1067,6 +1073,7 @@
           val = newVal;
         }
         childOb = !shallow && observe(newVal);
+        // 当数据变化，执行依赖收集器里面的所有watcher
         dep.notify();
       }
     });
@@ -4398,6 +4405,7 @@
    */
   function queueWatcher (watcher) {
     var id = watcher.id;
+    // 如果但时间内修改同一个渲染Watcher上的数据，渲染Watcher只执行一次
     if (has[id] == null) {
       has[id] = true;
       if (!flushing) {
@@ -4563,6 +4571,7 @@
    */
   Watcher.prototype.update = function update () {
     /* istanbul ignore else */
+    // 如果当前watcher.lazy是true，则表示属于computed
     if (this.lazy) {
       this.dirty = true;
     } else if (this.sync) {
@@ -4756,10 +4765,12 @@
           vm
         );
       } else if (!isReserved(key)) {
+        // 从this上的数据全部拦截到this._data里面读取
+        // 例如 this.name 等同于 this._data.name
         proxy(vm, "_data", key);
       }
     }
-    // observe data
+    // 数据观察
     observe(data, true /* asRootData */);
   }
 
@@ -4864,6 +4875,7 @@
         if (watcher.dirty) {
           watcher.evaluate();
         }
+        // 这里一般如果存在，Dep.target则是render Watcher
         if (Dep.target) {
           watcher.depend();
         }
@@ -11936,6 +11948,7 @@
 
   /*  */
 
+  // 这里是通过createCompiler解构出来的compileToFunctions
   var ref$1 = createCompiler(baseOptions);
   var compileToFunctions = ref$1.compileToFunctions;
 
@@ -11960,7 +11973,7 @@
     var el = query(id);
     return el && el.innerHTML
   });
-
+  // 缓存mount函数
   var mount = Vue.prototype.$mount;
   // 这个地方判断 new Vue()时，是否存在render函数
   // 不存在则会把template编译成render函数
@@ -11981,6 +11994,7 @@
 
     var options = this.$options;
     // resolve template/el and convert to render function
+    // 用来区分是否是完成版vue
     if (!options.render) {
       var template = options.template;
       if (template) {

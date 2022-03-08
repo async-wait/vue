@@ -145,10 +145,12 @@ function initData (vm: Component) {
         vm
       )
     } else if (!isReserved(key)) {
+      // 从this上的数据全部拦截到this._data里面读取
+      // 例如 this.name 等同于 this._data.name
       proxy(vm, `_data`, key)
     }
   }
-  // observe data
+  // 数据观察
   observe(data, true /* asRootData */)
 }
 
@@ -165,7 +167,7 @@ export function getData (data: Function, vm: Component): any {
   }
 }
 
-const computedWatcherOptions = { lazy: true }
+// const computedWatcherOptions = { lazy: true }
 
 function initComputed (vm: Component, computed: Object) {
   // $flow-disable-line
@@ -255,6 +257,7 @@ function createComputedGetter (key) {
       if (watcher.dirty) {
         watcher.evaluate()
       }
+      // 这里一般如果存在，Dep.target则是render Watcher
       if (Dep.target) {
         watcher.depend()
       }
